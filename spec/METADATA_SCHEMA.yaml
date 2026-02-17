@@ -1,0 +1,292 @@
+# OpenIOM Metadata Schema
+# Version: 1.0.0
+# Last Updated: 2026-02-17
+#
+# This schema defines the structure of metadata.yaml files that accompany
+# each OpenIOM skill. The metadata.yaml provides machine-readable information
+# for tooling, search, platform integration, and dependency management.
+#
+# Validation: All metadata.yaml files must conform to this schema.
+
+schema_version: "1.0.0"
+
+# --- Required Fields ---
+
+required:
+  - name
+  - version
+  - industry
+  - sub_sector
+  - function
+  - complexity
+  - supported_locales
+  - tags
+  - reference_framework
+  - roles
+  - contains_pii
+  - authors
+  - license
+
+# --- Field Definitions ---
+
+fields:
+
+  name:
+    type: string
+    description: Skill identifier, must match directory name
+    constraints:
+      pattern: "^[a-z0-9-]+$"
+      max_length: 64
+    required: true
+    example: "kyc-customer-onboarding"
+
+  version:
+    type: string
+    description: Semantic version of the skill
+    constraints:
+      pattern: "^\\d+\\.\\d+\\.\\d+$"
+    required: true
+    example: "1.0.0"
+
+  industry:
+    type: string
+    description: Industry slug, must match a directory in skills/
+    required: true
+    example: "financial-services"
+
+  sub_sector:
+    type: string
+    description: Sub-sector slug, must match a directory under the industry
+    required: true
+    example: "commercial-banking"
+
+  function:
+    type: string
+    description: Business function this skill serves
+    required: true
+    example: "compliance"
+
+  complexity:
+    type: string
+    description: Skill complexity level
+    constraints:
+      enum: ["basic", "intermediate", "advanced"]
+    required: true
+    example: "intermediate"
+
+  # --- Locale Support ---
+
+  supported_locales:
+    type: array
+    description: List of locales with overlay files
+    items:
+      type: object
+      required: [code, country, version, last_updated]
+      properties:
+        code:
+          type: string
+          description: ISO 3166-1 alpha-2 country code
+          constraints:
+            pattern: "^[A-Z]{2}$"
+        country:
+          type: string
+          description: Full country name
+        version:
+          type: string
+          description: Version of the locale overlay
+        last_updated:
+          type: date
+          description: Date the locale overlay was last verified
+    constraints:
+      min_items: 1
+    required: true
+
+  # --- Discovery ---
+
+  tags:
+    type: array
+    items:
+      type: string
+    constraints:
+      min_items: 2
+    required: true
+    example: ["kyc", "onboarding", "compliance", "aml"]
+
+  # --- Framework Alignment ---
+
+  reference_framework:
+    type: object
+    description: >
+      Industry framework mapping. Required for all skills.
+      Maps the skill to established industry standards.
+    required: true
+    properties:
+      primary:
+        type: object
+        required: true
+        properties:
+          name:
+            type: string
+            description: Framework name
+            required: true
+            example: "BIAN (Banking Industry Architecture Network)"
+          version:
+            type: string
+            description: Framework version
+            required: false
+            example: "13.0"
+          mapping:
+            type: string
+            description: Specific service domain, process area, or reference ID
+            required: true
+            example: "Party Reference Data Management, Customer Offer"
+          url:
+            type: string
+            description: URL to framework documentation
+            required: false
+      secondary:
+        type: object
+        required: false
+        properties:
+          name:
+            type: string
+            required: true
+          mapping:
+            type: string
+            required: true
+          url:
+            type: string
+            required: false
+
+  # --- Dependencies ---
+
+  dependencies:
+    type: array
+    description: Skills that must run before this skill (upstream)
+    items:
+      type: object
+      properties:
+        skill:
+          type: string
+          description: Name of the upstream skill
+        data_required:
+          type: string
+          description: What data is needed from the upstream skill
+    required: false
+    default: []
+
+  triggers:
+    type: array
+    description: Skills triggered by this skill's outputs (downstream)
+    items:
+      type: object
+      properties:
+        skill:
+          type: string
+          description: Name of the downstream skill
+        condition:
+          type: string
+          description: Condition that triggers the downstream skill
+    required: false
+    default: []
+
+  # --- Roles ---
+
+  roles:
+    type: array
+    description: Roles defined in this skill
+    items:
+      type: string
+    constraints:
+      min_items: 1
+    required: true
+    example: ["operator", "reviewer", "approver", "auditor", "admin"]
+
+  # --- Reporting Summary ---
+
+  kpi_count:
+    type: integer
+    description: Number of KPIs defined in the Reporting section
+    constraints:
+      minimum: 3
+    required: false
+
+  alert_count:
+    type: integer
+    description: Number of alert triggers defined
+    required: false
+
+  report_count:
+    type: integer
+    description: Number of suggested reports defined
+    required: false
+
+  # --- Data Sensitivity ---
+
+  contains_pii:
+    type: boolean
+    description: Whether the skill processes personally identifiable information
+    required: true
+
+  contains_sensitive_pii:
+    type: boolean
+    description: Whether the skill processes sensitive PII (national IDs, biometrics)
+    required: false
+    default: false
+
+  contains_restricted_data:
+    type: boolean
+    description: Whether the skill processes restricted data (sanctions, PEP)
+    required: false
+    default: false
+
+  # --- Compatibility ---
+
+  compatible_with:
+    type: array
+    description: AI platforms and standards this skill is compatible with
+    items:
+      type: string
+    required: false
+    default: ["agent-skills-standard"]
+    example: ["agent-skills-standard", "anthropic-mcp", "openai-function-calling"]
+
+  # --- Authorship ---
+
+  authors:
+    type: array
+    items:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+    constraints:
+      min_items: 1
+    required: true
+
+  license:
+    type: string
+    description: License identifier
+    required: true
+    example: "Apache-2.0"
+
+  # --- Changelog ---
+
+  changelog:
+    type: array
+    items:
+      type: object
+      required: [version, date, changes]
+      properties:
+        version:
+          type: string
+        date:
+          type: date
+        changes:
+          type: array
+          items:
+            type: string
+    required: false

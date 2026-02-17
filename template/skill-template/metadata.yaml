@@ -1,0 +1,79 @@
+# OpenIOM Skill Metadata
+# See spec/METADATA_SCHEMA.yaml for field definitions and constraints.
+
+name: skill-name-here
+version: 1.0.0
+industry: industry-slug
+sub_sector: sub-sector-slug
+function: business-function
+complexity: intermediate  # basic | intermediate | advanced
+
+# Locale support
+supported_locales:
+  - code: XX
+    country: Country Name
+    version: 1.0.0
+    last_updated: 2026-01-01
+
+# Discovery
+tags:
+  - tag1
+  - tag2
+  - tag3
+
+# Framework alignment (required)
+reference_framework:
+  primary:
+    name: "Framework Name"
+    version: "Version"
+    mapping: "Specific service domain or process area"
+    url: "https://framework-docs-url"
+  secondary:
+    name: "Secondary Framework"
+    mapping: "Process ID or reference"
+
+# Dependencies and handoffs
+dependencies: []
+  # - skill: upstream-skill-name
+  #   data_required: "description of data needed"
+
+triggers: []
+  # - skill: downstream-skill-name
+  #   condition: "condition that triggers it"
+
+# Roles defined in this skill
+roles:
+  - operator
+  - reviewer
+  - approver
+  - auditor
+  - admin
+
+# Reporting summary
+kpi_count: 0
+alert_count: 0
+report_count: 0
+
+# Data sensitivity
+contains_pii: false
+contains_sensitive_pii: false
+contains_restricted_data: false
+
+# Compatibility
+compatible_with:
+  - agent-skills-standard
+  - anthropic-mcp
+  - openai-function-calling
+
+# Authorship
+authors:
+  - name: Your Name
+    url: https://example.com
+license: Apache-2.0
+
+# Changelog
+changelog:
+  - version: 1.0.0
+    date: 2026-01-01
+    changes:
+      - Initial release

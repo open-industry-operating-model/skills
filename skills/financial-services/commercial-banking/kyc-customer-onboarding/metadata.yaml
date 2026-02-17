@@ -1,0 +1,95 @@
+# OpenIOM Skill Metadata
+# KYC Customer Onboarding — Commercial Banking
+# See spec/METADATA_SCHEMA.yaml for field definitions.
+
+name: kyc-customer-onboarding
+version: 1.0.0
+industry: financial-services
+sub_sector: commercial-banking
+function: compliance
+complexity: intermediate
+
+# Locale support
+supported_locales:
+  - code: UG
+    country: Uganda
+    version: 1.0.0
+    last_updated: 2026-02-17
+
+# Discovery
+tags:
+  - kyc
+  - onboarding
+  - compliance
+  - aml
+  - customer-verification
+  - identity
+  - due-diligence
+  - sanctions-screening
+
+# Framework alignment
+reference_framework:
+  primary:
+    name: "BIAN (Banking Industry Architecture Network)"
+    version: "13.0"
+    mapping: "Party Reference Data Management, Customer Offer, Party Authentication"
+    url: "https://bian.org"
+  secondary:
+    name: "APQC Banking PCF"
+    mapping: "8.1.1 Establish KYC/CDD, 8.1.2 Perform due diligence"
+    url: "https://www.apqc.org/process-frameworks"
+
+# Dependencies and handoffs
+dependencies: []
+
+triggers:
+  - skill: account-opening
+    condition: customer_approved
+  - skill: suspicious-activity-reporting
+    condition: sanctions_match_confirmed
+  - skill: kyc-customer-onboarding
+    condition: kyc_review_due
+  - skill: enhanced-due-diligence
+    condition: enhanced_dd_required
+  - skill: beneficial-ownership-registry
+    condition: business_account_approved
+
+# Roles defined in this skill
+roles:
+  - operator
+  - reviewer
+  - approver
+  - auditor
+  - admin
+
+# Reporting summary
+kpi_count: 9
+alert_count: 6
+report_count: 6
+
+# Data sensitivity
+contains_pii: true
+contains_sensitive_pii: true
+contains_restricted_data: true
+
+# Compatibility
+compatible_with:
+  - agent-skills-standard
+  - anthropic-mcp
+  - openai-function-calling
+
+# Authorship
+authors:
+  - name: Tyms
+    url: https://tyms.com
+license: Apache-2.0
+
+# Changelog
+changelog:
+  - version: 1.0.0
+    date: 2026-02-17
+    changes:
+      - Initial release with core KYC process
+      - Uganda locale overlay
+      - Full reporting, audit, and compliance sections
+      - BIAN and APQC framework alignment
